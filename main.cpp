@@ -2,7 +2,7 @@
 #include <vector>
 #include <string>
 #include <map>
-#include <unordered_map>
+
 
 using namespace std; // namespace std 사용
 
@@ -63,31 +63,34 @@ public:
 
 class BorrowManager {
 public:
-	map<string, bool> stock;
+	map<string, int> stock; //책 제목과 재고 갯수
+	
 	void borrow_book() {
 		string title;
 		cin >> title;
-		if (stock[title] == false) {
-			stock[title] = true;
-			cout << "대여되었습니다" << endl;
+		if (stock[title] != 0) {
+			stock[title]--;
+			
+			cout << "대여되었습니다. 남은책은 "<<stock[title]<<"권입니다." << endl;
 		}
-		else cout << "대여중인 도서입니다" << endl;
+		else cout << "대여가능 재고가 없습니다" << endl; //0권이라면
 	}
 	void return_book() {
 		string title;
 		cin >> title;
-		if (stock[title] == false) {
+		if (stock[title] == 3) { //3권이 다있다면
 			cout << "이미 반납되어있습니다" << endl;
 			return;
 		}
-		stock[title] = false;
-		cout << "반납처리됬습니다" << endl;
+		else {
+			stock[title]++;
+			cout << "반납처리됬습니다" << endl;
+		}
 	}
 	void displayStock() {
-		map<string, bool>::iterator it;
+		map<string, int>::iterator it;
 		for (it = stock.begin(); it != stock.end(); it++) {
-			if (it->second == false)
-				cout << it->first <<", ";
+			cout << it->first << ": " << it->second << "권, " << endl;
 		}
 		cout << "입니다" << endl;
 	}
@@ -123,7 +126,7 @@ int main() {
 			cout << "책 저자: ";
 			getline(cin, author); // 저자명 입력 (공백 포함)
 			manager.addBook(title, author); // 입력받은 책 정보를 추가
-			s_manager.stock[title] = false; //대여 안받은상태
+			s_manager.stock[title] = 3; //재고량은 3권으로 고정
 		}
 		else if (choice == 2) {
 			// 2번 선택: 모든 책 출력
